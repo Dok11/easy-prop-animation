@@ -1,0 +1,47 @@
+{
+  "name": "easy-prop-animation",
+  "version": "1.0.0",
+  "description": "Helpful class for Babylon.js that allows you easy to runs a property animations",
+  "keywords": [
+    "babylonjs",
+    "helper",
+    "animation",
+    "property",
+    "easing"
+  ],
+  "author": "Oleg Postoev",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dok11/easy-prop-animation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Dok11/easy-prop-animation/issues"
+  },
+  "homepage": "https://github.com/Dok11/easy-prop-animation#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.0",
+    "@babel/plugin-transform-runtime": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-typescript": "^7.21.0",
+    "@babylonjs/core": "^5.48.0",
+    "@types/node": "^18.14.1",
+    "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "@babylonjs/core": "^5.0.0"
+  },
+  "scripts": {
+    "build:cjs": "babel src --out-dir dist/cjs --extensions .ts --source-maps",
+    "build:esm": "babel src --out-dir dist/esm --extensions .ts --source-maps --env-name esm",
+    "build:tsc": "npx tsc",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:tsc",
+    "prepare": "npm run build"
+  }
+}
