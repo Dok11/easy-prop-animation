@@ -58,12 +58,21 @@ EasyPropAnimation.run(camera, {
 });
 ```
 
-And also you can the obly specified property of a vector:
+And also you can the only specified property of a vector:
 
 ```ts
 EasyPropAnimation.run(camera, {
   'position.y': 10,
   transition: 'all 300ms ease-in-out',
+});
+```
+
+And you can use Bézier curve for easing function:
+
+```ts
+EasyPropAnimation.run(camera, {
+  position: [-1, 4, 3],
+  transition: 'all 1s cubic-bezier(0.42, 0, 0.58, 1)',
 });
 ```
 
@@ -84,6 +93,19 @@ animations.forEach((anim) => {
     });
   };
 });
+```
+
+With this library we can animate Nodes, Cameras and even Scene, here is an example:
+
+```ts
+scene.imageProcessingConfiguration.exposure = 0;
+
+function onSceneReady() {
+  EasyPropAnimation.run(this.scene, {
+    'imageProcessingConfiguration.exposure': 1,
+    transition: 'all 1s ease-in-out',
+  });
+}
 ```
 
 ## Contributing
