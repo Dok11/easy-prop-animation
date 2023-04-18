@@ -11,7 +11,7 @@ import { Matrix, Quaternion, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Node } from '@babylonjs/core/node';
 import { Scene } from '@babylonjs/core/scene';
 import { Nullable } from '@babylonjs/core/types';
-
+import { IAnimationKey } from '@babylonjs/core/Animations/animationKey';
 
 
 interface StyleData {
@@ -94,7 +94,7 @@ export class EasyPropAnimation {
       const initialValue = EasyPropAnimation.getInitialValue(target, property);
       const finalValue = EasyPropAnimation.getFinalValue(initialValue, style[property]);
 
-      const keyFrames = [
+      const keyFrames: IAnimationKey[] = [
         {
           frame: 0,
           value: initialValue,
@@ -119,7 +119,7 @@ export class EasyPropAnimation {
 
       target.animations.push(animation);
 
-      animates.push(scene.beginAnimation(target, 0, keyFrames[1].frame, false, 1));
+      animates.push(scene.beginDirectAnimation(target, [animation], 0, keyFrames[1].frame, false, 1));
     }
 
     return animates;
