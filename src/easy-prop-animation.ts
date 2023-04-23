@@ -2,16 +2,15 @@
 import '@babylonjs/core/Animations/animatable';
 
 import { Camera } from '@babylonjs/core/Cameras/camera';
-import { Animatable } from '@babylonjs/core/Animations/animatable';
 import { Animation } from '@babylonjs/core/Animations/animation';
 import { BezierCurveEase, CircleEase, EasingFunction, IEasingFunction } from '@babylonjs/core/Animations/easing';
-import { Engine } from '@babylonjs/core/Engines/engine';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Matrix, Quaternion, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Node } from '@babylonjs/core/node';
 import { Scene } from '@babylonjs/core/scene';
 import { Nullable } from '@babylonjs/core/types';
 import { IAnimationKey } from '@babylonjs/core/Animations/animationKey';
+import { AnimationGroup } from '@babylonjs/core/Animations/animationGroup';
 
 
 interface StyleData {
@@ -50,16 +49,8 @@ export class EasyPropAnimation {
    * @param style - A StyleData object containing property values and transition data.
    * @returns An array of Animatable objects, each representing an animation applied to the node.
    */
-  public static run<T extends Node | Camera | Scene, K extends keyof T>(target: T, style: StyleDataWithKeys<T, K>): Animatable[] {
-    // Access the scene based on the target type
-    let scene: Scene;
-    if (target instanceof Node || target instanceof Camera) {
-      scene = target.getScene();
-    } else if (target instanceof Scene) {
-      scene = target;
-    } else {
-      throw new Error('Unsupported target type');
-    }
+  public static run<T extends Node | Camera | Scene, K extends keyof T>(target: T, style: StyleDataWithKeys<T, K>): AnimationGroup {
+    const scene = EasyPropAnimation.getScene(target);
 
     const transitions = EasyPropAnimation.parseTransition(style.transition);
     const propertiesToAnimate = Object.keys(style).filter((key) => key !== 'transition');
@@ -70,17 +61,11 @@ export class EasyPropAnimation {
     }
     target.animations = [];
 
-    // Access the engine based on the target type
-    let engine: Engine;
-    if (target instanceof Scene) {
-      engine = target.getEngine();
-    } else {
-      engine = (target as Node | Camera).getEngine();
-    }
-
+    const engine = target.getEngine();
     const frameRate = engine.getFps();
 
-    const animates: Animatable[] = [];
+    const uniqueIdentifier = target instanceof Scene ? 'scene' + target.getUniqueId() : target.uniqueId;
+    const animationGroup = new AnimationGroup(`PropertyAnimGroup-${uniqueIdentifier}`, scene);
 
     for (const property of propertiesToAnimate) {
       const transition = transitions[property] || transitions['all'];
@@ -100,7 +85,7 @@ export class EasyPropAnimation {
           value: initialValue,
         },
         {
-          frame: Math.round((duration / 1000) * frameRate),
+          frame: Math.round(duration / 1000 * frameRate),
           value: finalValue,
         },
       ];
@@ -117,12 +102,28 @@ export class EasyPropAnimation {
       animation.setKeys(keyFrames);
       animation.setEasingFunction(EasyPropAnimation.getEasingFunction(transition.easing));
 
-      target.animations.push(animation);
+      animationGroup.addTargetedAnimation(animation, target);
 
-      animates.push(scene.beginDirectAnimation(target, [animation], 0, keyFrames[1].frame, false, 1));
+      target.animations.push(animation);
     }
 
-    return animates;
+    animationGroup.play();
+
+    return animationGroup;
+  }
+
+
+  /**
+   * Returns the scene based on the target type.
+   */
+  private static getScene<T extends Node | Camera | Scene>(target: T): Scene {
+    if (target instanceof Node || target instanceof Camera) {
+      return target.getScene();
+    } else if (target instanceof Scene) {
+      return target;
+    }
+
+    throw new Error('Unsupported target type');
   }
 
 

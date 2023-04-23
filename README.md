@@ -76,22 +76,18 @@ EasyPropAnimation.run(camera, {
 });
 ```
 
-For manual control of created animation you can use returned `Animatable[]` array:
+For manual control of created animation you can use returned `AnimationGroup`:
 
 ```ts
-const animations = EasyPropAnimation.run(camera, {
+const animationGroup = EasyPropAnimation.run(camera, {
   'position.y': 10,
   transition: 'all 300ms ease-in-out',
 });
-animations.forEach((anim) => {
-  // For example you can use events of Animatable object
-  anim.onAnimationEnd = () => {
-    // To make any that you want, event for call another animation
-    EasyPropAnimation.run(camera, {
-      'position.y': 0,
-      transition: 'all 300ms ease-in-out',
-    });
-  };
+animationGroup.onAnimationGroupEndObservable.add(() => {
+  EasyPropAnimation.run(camera, {
+    'position.y': 0,
+    transition: 'all 300ms ease-in-out',
+  });
 });
 ```
 
