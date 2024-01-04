@@ -1,6 +1,6 @@
 {
   "name": "easy-prop-animation",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Helpful class for Babylon.js that allows you easy to runs a property animations",
   "keywords": [
     "babylonjs",
@@ -30,12 +30,12 @@
     "@babel/plugin-transform-runtime": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.21.0",
-    "@babylonjs/core": "^5.48.0",
+    "@babylonjs/core": "^6.37.0",
     "@types/node": "^18.14.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.1.6"
   },
   "peerDependencies": {
-    "@babylonjs/core": "^5.0.0"
+    "@babylonjs/core": "^6.0.0"
   },
   "scripts": {
     "build:cjs": "babel src --out-dir dist/cjs --extensions .ts --source-maps",
