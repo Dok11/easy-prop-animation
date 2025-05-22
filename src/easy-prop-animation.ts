@@ -1,6 +1,6 @@
 // For beginAnimation
 import '@babylonjs/core/Animations/animatable';
-import { BaseTexture } from '@babylonjs/core';
+import { BaseTexture } from '@babylonjs/core/Materials/Textures/baseTexture';
 import { Animation } from '@babylonjs/core/Animations/animation';
 import { AnimationGroup } from '@babylonjs/core/Animations/animationGroup';
 import { IAnimationKey } from '@babylonjs/core/Animations/animationKey';
