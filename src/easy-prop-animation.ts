@@ -1,16 +1,16 @@
 // For beginAnimation
 import '@babylonjs/core/Animations/animatable';
-
-import { Camera } from '@babylonjs/core/Cameras/camera';
+import { BaseTexture } from '@babylonjs/core';
 import { Animation } from '@babylonjs/core/Animations/animation';
+import { AnimationGroup } from '@babylonjs/core/Animations/animationGroup';
+import { IAnimationKey } from '@babylonjs/core/Animations/animationKey';
 import { BezierCurveEase, CircleEase, EasingFunction, IEasingFunction } from '@babylonjs/core/Animations/easing';
+import { Camera } from '@babylonjs/core/Cameras/camera';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Matrix, Quaternion, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Node } from '@babylonjs/core/node';
 import { Scene } from '@babylonjs/core/scene';
 import { Nullable } from '@babylonjs/core/types';
-import { IAnimationKey } from '@babylonjs/core/Animations/animationKey';
-import { AnimationGroup } from '@babylonjs/core/Animations/animationGroup';
 
 
 interface StyleData {
@@ -38,6 +38,24 @@ function isClonable(obj: unknown): obj is Clonable {
 }
 
 
+/**
+ * EasyPropAnimation class provides a static method to animate properties of Babylon.js objects.
+ *
+ * Use the `run` method to apply animations to properties specified in a StyleData object.
+ *
+ * @example
+ * ```typescript
+ * import { EasyPropAnimation } from './path/to/easy-prop-animation';
+ *
+ * const target = scene.getMeshByName('myMesh');
+ * const style = {
+ *   position: new Vector3(1, 2, 3),
+ *   transition: 'position 1s ease-in-out',
+ * };
+ *
+ * EasyPropAnimation.run(target, style);
+ * ```
+ */
 export class EasyPropAnimation {
   /**
    * Takes a Node and a StyleData object, then applies animations
@@ -49,8 +67,11 @@ export class EasyPropAnimation {
    * @param style - A StyleData object containing property values and transition data.
    * @returns An array of Animatable objects, each representing an animation applied to the node.
    */
-  public static run<T extends Node | Camera | Scene, K extends keyof T>(target: T, style: StyleDataWithKeys<T, K>): AnimationGroup {
+  public static run<T extends Node | Camera | Scene | BaseTexture, K extends keyof T>(target: T, style: StyleDataWithKeys<T, K>): AnimationGroup {
     const scene = EasyPropAnimation.getScene(target);
+    if (!scene) {
+      throw new Error('Scene not found for the target');
+    }
 
     const transitions = EasyPropAnimation.parseTransition(style.transition);
     const propertiesToAnimate = Object.keys(style).filter((key) => key !== 'transition');
@@ -61,7 +82,7 @@ export class EasyPropAnimation {
     }
     target.animations = [];
 
-    const engine = target.getEngine();
+    const engine = scene.getEngine();
     const frameRate = engine.getFps();
 
     const uniqueIdentifier = target instanceof Scene ? 'scene' + target.getUniqueId() : target.uniqueId;
@@ -116,8 +137,8 @@ export class EasyPropAnimation {
   /**
    * Returns the scene based on the target type.
    */
-  private static getScene<T extends Node | Camera | Scene>(target: T): Scene {
-    if (target instanceof Node || target instanceof Camera) {
+  private static getScene<T extends Node | Camera | Scene | BaseTexture>(target: T): Nullable<Scene> {
+    if (target instanceof Node || target instanceof Camera || target instanceof BaseTexture) {
       return target.getScene();
     } else if (target instanceof Scene) {
       return target;

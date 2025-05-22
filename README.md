@@ -91,7 +91,13 @@ animationGroup.onAnimationGroupEndObservable.add(() => {
 });
 ```
 
-With this library we can animate Nodes, Cameras and even Scene, here is an example:
+With this library we can animate:
+- Nodes
+- Cameras
+- Scene
+- Textures
+
+### How to animate a Scene
 
 ```ts
 scene.imageProcessingConfiguration.exposure = 0;
@@ -102,6 +108,15 @@ function onSceneReady() {
     transition: 'all 1s ease-in-out',
   });
 }
+```
+
+### How to animate a Texture
+
+```ts
+EasyPropAnimation.run(this.scene.environmentTexture, {
+  rotationY: 1.05,
+  transition: 'all 300ms ease-out',
+});
 ```
 
 ## Contributing
